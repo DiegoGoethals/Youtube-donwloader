@@ -1,10 +1,12 @@
-import yt_dlp
+import yt_dlp, os
+
+download_folder = os.path.expanduser("~/Downloads")
 
 video_url = input("Enter the video URL: ")
 
 ydl_opts = {
     "format": "best",
-    "outtmpl": "./%(title)s.%(ext)s",
+    "outtmpl": f"{download_folder}/%(title)s.%(ext)s",
 }
 
 try:
