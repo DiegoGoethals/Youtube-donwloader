@@ -1,6 +1,6 @@
 import yt_dlp, os
 
-download_folder = os.path.expanduser("~/Downloads")
+download_folder = os.path.expanduser("~/Videos")
 
 video_url = input("Enter the video URL: ")
 
