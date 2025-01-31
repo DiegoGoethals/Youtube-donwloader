@@ -23,18 +23,8 @@ function init() {
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         downloadButton.setAttribute('disabled', 'disabled');
-        downloadButton.innerHTML = "Preparing download...";
+        downloadButton.innerHTML = "Downloading...";
         processVideo(_url);
-    });
-
-    const dialogButton = document.getElementById('dialog_button');
-    dialogButton.addEventListener('click', function() {
-        downloadVideo(_url);
-    });
-
-    const closeButton = document.getElementById('close_button');
-    closeButton.addEventListener('click', function() {
-        closeDialog();
     });
 }
 
@@ -52,13 +42,12 @@ function processVideo(url) {
     )
         .then(response => response.json())
         .then(data => {
-            _url = data["file_path"];
-            console.log(data);
-            openDialog();
+            const filename = data.filename;
+            downloadVideo(data.file_path, filename);
         });
 }
 
-function downloadVideo(url) {
+function downloadVideo(url, filename) {
     const encodedUrl = encodeURIComponent(url);
 
     fetch(`${_baseUrl}download?file=${encodedUrl}`)
@@ -69,21 +58,10 @@ function downloadVideo(url) {
         .then(blob => {
             const a = document.createElement("a");
             a.href = URL.createObjectURL(blob);
-            a.download = url.split("/").pop();
+            a.download = filename;
             document.body.appendChild(a);
             a.click();
             a.remove();
         })
         .catch(error => console.error("Error downloading file:", error));
-}
-
-
-function openDialog() {
-    const dialog = document.getElementById('download_dialog');
-    dialog.showModal();
-}
-
-function closeDialog() {
-    const dialog = document.getElementById('download_dialog');
-    dialog.close();
 }

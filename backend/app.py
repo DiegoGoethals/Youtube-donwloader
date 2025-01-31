@@ -28,7 +28,7 @@ def process_video():
 
     try:
         (info, file_path) = download_video(video_url)
-        return jsonify({"message": "Processing complete!", "file_path": file_path}), 200
+        return jsonify({"message": "Processing complete!", "file_path": file_path, "filename": info["title"]}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500    
 
