@@ -1,10 +1,12 @@
 from flask import Flask, request, jsonify, send_file
+from flask_cors import CORS
 from apscheduler.schedulers.background import BackgroundScheduler
 from downloader import download_video
 from temp_cleanup import cleanup_temp_files
 import os
 
 app = Flask(__name__)
+CORS(app)
 
 cleanup_temp_files()  # Clean up any existing temp files on startup
 
@@ -26,7 +28,7 @@ def process_video():
 
     try:
         (info, file_path) = download_video(video_url)
-        return jsonify({"message": "Processing complete!"}), 200
+        return jsonify({"message": "Processing complete!", "file_path": file_path}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500    
 
