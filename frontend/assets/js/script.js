@@ -6,20 +6,21 @@ const _baseUrl = "http://localhost:5000/";
 init();
 
 function init() {
+    const downloadButton = document.getElementById('download_button');
+
     const urlInput = document.getElementById('video_url');
     urlInput.addEventListener('input', function() {
         const url = urlInput.value;
         if (url) {
-            document.getElementById('download_button').removeAttribute('disabled');
+            downloadButton.removeAttribute('disabled');
         } else {
-            document.getElementById('download_button').setAttribute('disabled', 'disabled');
+            downloadButton.setAttribute('disabled', 'disabled');
         }
         _url = url;
     });
 
     const form = document.getElementById('download');
-    const downloadButton = document.getElementById('download_button');
-
+    
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         downloadButton.setAttribute('disabled', 'disabled');
