@@ -1,6 +1,5 @@
 "use strict";
 
-let _url = "";
 const _baseUrl = "http://localhost:5000/";
 
 init();
@@ -8,45 +7,48 @@ init();
 function init() {
     const downloadButton = document.getElementById('download_button');
 
-    const urlInput = document.getElementById('video_url');
-    urlInput.addEventListener('input', function() {
-        const url = urlInput.value;
-        if (url) {
-            downloadButton.removeAttribute('disabled');
-        } else {
-            downloadButton.setAttribute('disabled', 'disabled');
-        }
-        _url = url;
-    });
-
     const form = document.getElementById('download');
     
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         downloadButton.setAttribute('disabled', 'disabled');
         downloadButton.innerHTML = "Downloading...";
-        processVideo(_url);
+        processVideo();
     });
 }
 
-function processVideo(url) {
-    console.log(url);
-
-    fetch(`${_baseUrl}process`, 
-        {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ "video_url": url })
-        }
-    )
-        .then(response => response.json())
-        .then(data => {
-            const filename = data.filename;
-            downloadVideo(data.file_path, filename);
+function getPageUrl() {
+    return new Promise((resolve, reject) => {
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            if (tabs.length > 0) {
+                resolve(tabs[0].url);
+            } else {
+                reject("No active tab found");
+            }
         });
+    });
 }
+
+async function processVideo() {
+    try {
+        const pageUrl = await getPageUrl();
+        console.log("Current URL:", pageUrl);
+        const response = await fetch(`${_baseUrl}process`, 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ "video_url": pageUrl })
+            }
+        );
+        const data = await response.json();
+        downloadVideo(data.file_path, data.filename);
+    } catch (error) {
+        console.error("Error getting URL:", error);
+    }
+}
+
 
 function downloadVideo(url, filename) {
     const encodedUrl = encodeURIComponent(url);
