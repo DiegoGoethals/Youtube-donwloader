@@ -65,6 +65,9 @@ function downloadVideo(url, filename) {
             document.body.appendChild(a);
             a.click();
             a.remove();
+
+            const downloadButton = document.getElementById('download_button');
+            downloadButton.removeAttribute('disabled');
         })
         .catch(error => console.error("Error downloading file:", error));
 }
